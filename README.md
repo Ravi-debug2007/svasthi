@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Svasthi
 
-## Getting Started
+Svasthi is a demo-ready mental-wellness backend for a Stitch-generated Next.js interface. It supports daily check-ins, consented voice-journal metadata, Dawn chat, supportive insights, dashboard trends, and an immediate 14416 crisis path.
 
-First, run the development server:
+## Run locally
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Copy `.env.example` to `.env.local`.
+2. Keep `DEMO_MODE=true` for a reliable offline demo, or set `GEMINI_API_KEY` and a verified `GEMINI_MODEL` for live insight wording.
+3. Run `npm run dev`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Safety and privacy
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- The MVP does not retain raw audio. The browser sends a consented transcript and lightweight Web Audio feature summary.
+- Insights are wellness signals, not diagnoses or medical advice.
+- Crisis phrases bypass Gemini and return immediate Tele-MANAS support guidance at 14416.
+- The demo store is in-memory. Add authenticated, encrypted persistence only after the hackathon.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Frontend integration
 
-## Learn More
+See [the API contract](docs/api-contract.md). Stitch should call the endpoints with a stable `x-svasthi-session` value per browser session.
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Import this project into Vercel and set `DEMO_MODE=true` for judging. Do not expose `GEMINI_API_KEY` through `NEXT_PUBLIC_` variables.
