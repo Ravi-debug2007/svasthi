@@ -9,7 +9,7 @@ ticket in `build-plan.md` — not just that the AI tool said it was done.
 | # | Ticket | Status | Verified on | Notes |
 |---|---|---|---|---|
 | 1 | F01 — Persistence, auth, journey state | Built (unverified) | | 2026-09-21: Code complete. Migration applied to live project (verified: 5 tables, RLS enabled, 13 policies). RLS isolation programmatically verified — cross-user reads/deletes blocked, forged user_id inserts rejected 403, anon sees nothing (see Known Issues for method). Still needs: Ravi's own click-through (sign-up/login/logout in the app) per the ticket's "you verify" step. |
-| 2 | F11 (start) — Test harness | Not started | | |
+| 2 | F11 (start) — Test harness | Built (unverified) | | 2026-09-21: Vitest 3.2.7 (pinned — v5 conflicts with @types/node 20 used by Next 14), minimal config with @ alias, smoke test, `npm run test`. Real output shown: 1 test passed; tsc/lint/build also pass. Ravi verifies via verification-guide.md Category 2. |
 | 3 | F00 — Product shell & design system | Not started | | |
 | 4 | F02 — Daily check-in | Not started | | |
 | 5 | F08 (banner) — Always-visible support | Not started | | |
