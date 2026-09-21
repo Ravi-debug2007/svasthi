@@ -21,16 +21,24 @@ export const journalSchema = z.object({
   consent: z.literal(true),
 });
 
-export const insightRequestSchema = z.object({
-  checkInId: z.string().uuid().optional(),
-  journalId: z.string().uuid().optional(),
-  checkIn: checkInSchema.optional(),
-  journal: journalSchema.omit({ consent: true }).optional(),
-}).refine((value) => Boolean(value.checkInId || value.checkIn), {
-  message: "Provide a checkInId or checkIn payload.",
-}).refine((value) => Boolean(value.journalId || value.journal), {
-  message: "Provide a journalId or journal payload.",
-});
+/**
+ * Insight requests may reference stored rows by id (own rows only) or pass
+ * inline payloads. An inline journal must carry explicit consent — the
+ * consent gate can never be skipped on the inline path (F01/F05).
+ */
+export const insightRequestSchema = z
+  .object({
+    checkInId: z.string().uuid().optional(),
+    journalId: z.string().uuid().optional(),
+    checkIn: checkInSchema.optional(),
+    journal: journalSchema.optional(),
+  })
+  .refine((value) => Boolean(value.checkInId || value.checkIn), {
+    message: "Provide a checkInId or checkIn payload.",
+  })
+  .refine((value) => Boolean(value.journalId || value.journal), {
+    message: "Provide a journalId or journal payload.",
+  });
 
 export const chatSchema = z.object({
   message: z.string().trim().min(1).max(1500),

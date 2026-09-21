@@ -11,7 +11,11 @@ export function fallbackInsight(checkIn: CheckIn, journal: Journal): Omit<Insigh
   if (checkIn.stress >= 7) evidence.push(`You rated your stress ${checkIn.stress} out of 10.`);
   if (checkIn.energy <= 3) evidence.push(`Your energy was ${checkIn.energy} out of 10.`);
   if (checkIn.sleepHours < 6.5) evidence.push(`You reported ${checkIn.sleepHours} hours of sleep.`);
-  if (journal.features.pauseRatio >= 0.35) evidence.push("Your reflection included longer pauses than usual for this demo signal.");
+  if (journal.features.pauseRatio >= 0.35) {
+    evidence.push(
+      `About ${Math.round(journal.features.pauseRatio * 100)}% of your recording was quieter moments.`,
+    );
+  }
   if (evidence.length === 0) evidence.push("You made time to notice how you are feeling today.");
   return {
     level,
