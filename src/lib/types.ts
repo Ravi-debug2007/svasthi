@@ -21,7 +21,8 @@ export type Journal = {
   id: string;
   createdAt: string;
   transcript: string;
-  features: VoiceFeatures;
+  /** Absent for typed reflections — only real recordings carry measurements. */
+  features?: VoiceFeatures;
 };
 
 export type Insight = {

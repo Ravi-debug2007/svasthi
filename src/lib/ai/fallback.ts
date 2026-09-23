@@ -1,7 +1,16 @@
+import { FIXED_NON_MEDICAL_DISCLAIMER } from "@/lib/ai/prompts";
 import { CheckIn, Insight, Journal, WellnessLevel } from "@/lib/types";
 
 export function calculateLevel(checkIn: CheckIn, journal: Journal): WellnessLevel {
-  if (checkIn.stress >= 8 || checkIn.energy <= 2 || journal.features.pauseRatio >= 0.35) return "watch";
+  // F04 rule (architecture.md, risk table): acoustics stay descriptive only.
+  // The level is driven by self-reported check-in data alone — never by voice
+  // measurements. Pauses in particular can reflect background noise, recording
+  // quality, or natural speech differences, so they must not push anyone
+  // toward a "watch" classification on their own.
+  void journal; // kept in the signature for API stability; acoustics intentionally unused here
+  if (checkIn.stress >= 8 || checkIn.energy <= 2) {
+    return "watch";
+  }
   return "steady";
 }
 
@@ -11,9 +20,13 @@ export function fallbackInsight(checkIn: CheckIn, journal: Journal): Omit<Insigh
   if (checkIn.stress >= 7) evidence.push(`You rated your stress ${checkIn.stress} out of 10.`);
   if (checkIn.energy <= 3) evidence.push(`Your energy was ${checkIn.energy} out of 10.`);
   if (checkIn.sleepHours < 6.5) evidence.push(`You reported ${checkIn.sleepHours} hours of sleep.`);
-  if (journal.features.pauseRatio >= 0.35) {
+  // Cite acoustics only when a real recording actually exists (F03: typed
+  // reflections carry no measurements, and none may be invented). Wording is
+  // measured and session-specific — no "usual" or personal-baseline claim,
+  // which architecture.md flags as unsupported comparison (F04).
+  if (journal.features != null && journal.features.pauseRatio >= 0.35) {
     evidence.push(
-      `About ${Math.round(journal.features.pauseRatio * 100)}% of your recording was quieter moments.`,
+      `Measured from your audio: about ${Math.round(journal.features.pauseRatio * 100)}% of this recording was quiet moments.`,
     );
   }
   if (evidence.length === 0) evidence.push("You made time to notice how you are feeling today.");
@@ -24,7 +37,7 @@ export function fallbackInsight(checkIn: CheckIn, journal: Journal): Omit<Insigh
     suggestion: level === "watch" ? "Try one minute of slow breathing: inhale for four, hold for four, and exhale for six. If this feeling stays with you, consider speaking with someone you trust." : "Keep one small restorative activity in your day—water, a brief walk, or a few quiet breaths.",
     referralRecommended: level === "watch",
     crisis: false,
-    disclaimer: "This is a wellness signal, not a diagnosis or medical advice.",
+    disclaimer: FIXED_NON_MEDICAL_DISCLAIMER,
     source: "fallback",
   };
 }

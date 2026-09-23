@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { useJourney } from "@/components/providers/JourneyProvider";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
 
 /**
  * Consent panel: explicit, visible consent before any reflection is sent for
@@ -32,20 +33,12 @@ export function ConsentPanel({ children }: { children?: ReactNode }) {
           <li>• You can change this at any time.</li>
         </ul>
         <div className="mt-5 flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={grantConsent}
-            className="min-h-[44px] rounded-full bg-primary px-6 text-sm font-semibold text-white transition-colors hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-          >
+          <PrimaryButton type="button" onClick={grantConsent}>
             Yes, allow AI processing
-          </button>
-          <button
-            type="button"
-            onClick={declineConsent}
-            className="min-h-[44px] rounded-full border border-stone-300 px-6 text-sm font-semibold text-ink transition-colors hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-          >
+          </PrimaryButton>
+          <PrimaryButton type="button" variant="secondary" onClick={declineConsent}>
             No, keep it private
-          </button>
+          </PrimaryButton>
         </div>
       </section>
     );
@@ -65,13 +58,14 @@ export function ConsentPanel({ children }: { children?: ReactNode }) {
           ? "Reflections you submit may be sent for AI processing to generate a supportive summary."
           : "Your reflections are kept out of AI processing. You can still write, save, and read them."}
       </p>
-      <button
+      <PrimaryButton
         type="button"
+        variant="secondary"
+        className="mt-4"
         onClick={state.consent.aiProcessingAllowed ? declineConsent : grantConsent}
-        className="mt-4 min-h-[44px] rounded-full border border-stone-300 px-5 text-sm font-semibold text-ink transition-colors hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       >
         {state.consent.aiProcessingAllowed ? "Turn AI processing off" : "Turn AI processing on"}
-      </button>
+      </PrimaryButton>
       {children}
     </section>
   );

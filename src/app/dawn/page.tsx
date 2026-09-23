@@ -1,19 +1,25 @@
-import Link from "next/link";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { NavLinkAction } from "@/components/ui/NavLinkAction";
 
+/**
+ * Honest placeholder (F00): the Dawn chat companion is F06 on the build
+ * plan. The chat API endpoint already exists behind it.
+ */
 export default function DawnPlaceholder() {
   return (
-    <div className="mx-auto max-w-2xl rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
-      <h1 className="text-2xl font-semibold">Dawn</h1>
-      <p className="mt-3 leading-7 text-ink-muted">
-        The Dawn chat companion is on the build plan and is not built yet. The chat API endpoint is
-        already available for it.
-      </p>
-      <Link
-        href="/"
-        className="mt-6 inline-flex min-h-[44px] items-center rounded-full border border-stone-300 px-5 text-sm font-semibold hover:bg-stone-100"
-      >
-        ← Back home
-      </Link>
+    <div className="mx-auto max-w-2xl space-y-8">
+      <PageHeader
+        eyebrow="Dawn"
+        title="A quiet place to reflect, out loud."
+        description="The Dawn chat companion is on the build plan and is not built yet. The chat API endpoint is already available for it."
+      />
+      <EmptyState
+        icon="🌅"
+        title="Dawn isn't awake yet"
+        description="When it arrives, Dawn is a brief, compassionate conversation with clear limits — an AI companion, clearly labelled, never a therapist."
+        action={<NavLinkAction href="/">← Back home</NavLinkAction>}
+      />
     </div>
   );
 }

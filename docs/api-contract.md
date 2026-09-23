@@ -25,14 +25,32 @@ Returns `{ "checkIns": [ ...same shape, newest first, limit 90 ] }` for the sign
 
 The browser computes voice features. Do not upload raw audio in this MVP.
 
+**Changed in F03:** `features` is now **optional**. A typed reflection (no
+recording) is saved without any `voice_features` row — no measurement is
+invented for it. When `features` is present, the values must be real local
+measurements of the user's actual audio.
+
 ```json
 {"transcript":"I have a lot on my plate and could not sleep.","features":{"durationSeconds":24,"pauseRatio":0.38,"speakingRateWpm":142,"rmsDb":-23},"consent":true}
 ```
 
+Typed entries omit `features` entirely:
+
+```json
+{"transcript":"Just writing this down before bed.","consent":true}
+```
+
 Returns `201 { "journal": { "id": "...", "createdAt": "...", "transcript": "...", "features": { ... } }, "crisisSignal": false }`.
 
-`crisisSignal` is `true` when the transcript matched the crisis-language
-detector, so the client can offer support immediately.
+`features` is absent in the response for typed entries. `crisisSignal` is
+`true` when the transcript matched the crisis-language detector, so the
+client can offer support immediately.
+
+## GET /api/journals
+
+Returns `{ "journals": [ ...same journal shape, newest first, limit 90 ] }
+for the signed-in user only. Entries with a recording include `features`;
+typed entries omit it.
 
 ## POST /api/insights
 

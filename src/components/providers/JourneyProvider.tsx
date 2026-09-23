@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { ReactNode } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { signOut as apiSignOut } from "@/lib/client/api";
+import { api, signOut as apiSignOut } from "@/lib/client/api";
 import {
   initialJourneyState,
   journeyReducer,
@@ -99,6 +99,39 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, []);
+
+  // Load the signed-in user's own rows from the server whenever a session
+  // becomes active (page restore or sign-in). Without this, the client state
+  // would start empty on every load and saved entries would "disappear"
+  // after a refresh even though they exist in Supabase. Journals are loaded
+  // alongside check-ins (F03) — a load failure leaves the in-memory list
+  // as-is rather than blocking sign-in.
+  useEffect(() => {
+    if (state.status !== "signed-in" || !state.userId) return;
+    let cancelled = false;
+    api<{ checkIns: JourneyState["checkIns"] }>("/api/check-ins")
+      .then((result) => {
+        if (!cancelled && Array.isArray(result.checkIns)) {
+          dispatch({ type: "check-ins/set", checkIns: result.checkIns });
+        }
+      })
+      .catch(() => {
+        // Leave the in-memory list as-is; feature pages surface server
+        // errors themselves. Never block sign-in on a data-load failure.
+      });
+    api<{ journals: JourneyState["journals"] }>("/api/journals")
+      .then((result) => {
+        if (!cancelled && Array.isArray(result.journals)) {
+          dispatch({ type: "journals/set", journals: result.journals });
+        }
+      })
+      .catch(() => {
+        // Same policy as check-ins: never block on a data-load failure.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [state.status, state.userId]);
 
   const signIn = async (email: string, password: string) => {
     const supabase = createSupabaseBrowserClient();

@@ -27,16 +27,17 @@ export function AuthPanel() {
         <p className="mt-1 text-sm text-ink-muted">
           Your entries are stored privately under this account and only this account can read them.
         </p>
-        <button
+        <PrimaryButton
           type="button"
+          variant="secondary"
+          className="mt-4"
           onClick={() => {
             setError(null);
             signOut().catch(() => setError("Could not sign out. Try again."));
           }}
-          className="mt-4 min-h-[44px] rounded-full border border-stone-300 px-5 text-sm font-semibold text-ink transition-colors hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           Log out
-        </button>
+        </PrimaryButton>
         {error && <p className="mt-3 text-sm text-support">{error}</p>}
       </section>
     );

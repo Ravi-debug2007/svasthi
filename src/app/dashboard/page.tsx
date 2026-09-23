@@ -1,19 +1,25 @@
-import Link from "next/link";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { NavLinkAction } from "@/components/ui/NavLinkAction";
 
+/**
+ * Honest placeholder (F00): the full trends dashboard is F07 on the build
+ * plan. Your week at a glance already appears on the home page.
+ */
 export default function DashboardPlaceholder() {
   return (
-    <div className="mx-auto max-w-2xl rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
-      <h1 className="text-2xl font-semibold">Trends</h1>
-      <p className="mt-3 leading-7 text-ink-muted">
-        The full trends dashboard is on the build plan and is not built yet. Your week at a glance
-        already appears on the home page.
-      </p>
-      <Link
-        href="/"
-        className="mt-6 inline-flex min-h-[44px] items-center rounded-full border border-stone-300 px-5 text-sm font-semibold hover:bg-stone-100"
-      >
-        ← Back home
-      </Link>
+    <div className="mx-auto max-w-2xl space-y-8">
+      <PageHeader
+        eyebrow="Trends"
+        title="Your trends will appear as you check in."
+        description="The full trends dashboard is on the build plan and is not built yet. Your week at a glance already appears on the home page."
+      />
+      <EmptyState
+        icon="📈"
+        title="No trend charts yet"
+        description="When it arrives, sample history will always be clearly badged and kept separate from your real entries."
+        action={<NavLinkAction href="/">← Back home</NavLinkAction>}
+      />
     </div>
   );
 }

@@ -74,9 +74,8 @@ export async function POST(request: Request) {
         id: data.id,
         createdAt: data.created_at,
         transcript: data.transcript,
-        // Stored voice features are not needed for insight generation here;
-        // the schema requires a features object, so read them if present.
-        features: { durationSeconds: 0, pauseRatio: 0, speakingRateWpm: 0 },
+        // A typed reflection has no recording, so it has no measurements —
+        // they stay absent rather than being zero-filled.
       };
       const { data: features } = await supabase
         .from("voice_features")

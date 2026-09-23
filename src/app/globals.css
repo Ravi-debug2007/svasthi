@@ -5,6 +5,8 @@
 :root {
   --background: #f7f8f4;
   --foreground: #20352d;
+  /* One intentional light theme — keep native controls light too. */
+  color-scheme: light;
 }
 
 /* One intentional light theme — no automatic dark mode without a designed

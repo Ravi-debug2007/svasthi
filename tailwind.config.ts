@@ -24,6 +24,19 @@ const config: Config = {
         lavender: {
           soft: "#EEEAF6",
         },
+        // Sage — soft green accents used by provenance badges and card borders.
+        sage: {
+          50: "#F3F7F4",
+          100: "#E4F0E8",
+          200: "#CFE3D6",
+          300: "#AECDB9",
+          400: "#8AB39C",
+          500: "#6A9A80",
+          600: "#527D67",
+          700: "#426553",
+          800: "#2C4A3B",
+          900: "#243D31",
+        },
         peach: {
           soft: "#FFF0E5",
         },

@@ -39,6 +39,7 @@ export type JourneyAction =
   | { type: "check-in/added"; checkIn: CheckIn }
   | { type: "check-ins/set"; checkIns: CheckIn[] }
   | { type: "journal/added"; journal: Journal }
+  | { type: "journals/set"; journals: Journal[] }
   | { type: "insight/set"; insight: Insight };
 
 export const initialJourneyState: JourneyState = {
@@ -83,6 +84,8 @@ export function journeyReducer(state: JourneyState, action: JourneyAction): Jour
       return { ...state, checkIns: action.checkIns };
     case "journal/added":
       return { ...state, journals: [action.journal, ...state.journals] };
+    case "journals/set":
+      return { ...state, journals: action.journals };
     case "insight/set":
       return { ...state, latestInsight: action.insight };
     default:
