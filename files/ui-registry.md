@@ -26,6 +26,8 @@ ticket.
 | `VoiceRecorder` | Presentational recorder over the page-owned `useRecorder` controller: real timer + level meter, 60s cap, playback, mic-error copy pointing to typed path | Built (F03) |
 | `TranscriptEditor` | Always-available typed reflection editor with live character count and error slot | Built (F03) |
 | `VoiceSignals` | Descriptive measured-acoustic cards (duration, loudness, quiet-ratio, words/min) with Measured badge, session-specific wording, and honest missing-measurement state | Built (F04) |
+| `MessageBubble` | One chat turn: user vs Dawn styling, AI badge always present on Dawn messages, source named (AI wording vs guided no-AI response), optional hint slot | Built (F06) |
+| `ChatPanel` | Dawn conversation: message list, accessible composer with live limit, suggested opening prompts (draft-only, user-initiated), honest clear-conversation scope, duplicate-send guard, crisis callback | Built (F06) |
 
 ## Rules for adding a new component
 

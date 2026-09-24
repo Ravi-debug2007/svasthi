@@ -38,3 +38,11 @@ next-env.d.ts
 # AI chat transcripts (contain pasted secrets from sessions)
 freebuff-chat-*.md
 studentCRUD.java
+
+.env*
+
+# local tooling artifacts
+.agents/
+.claude/
+.vercel-login.log
+skills-lock.json

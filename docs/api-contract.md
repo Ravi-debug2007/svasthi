@@ -100,16 +100,27 @@ database.
 {"message":"I feel overwhelmed today."}
 ```
 
-Returns `{ "reply": "...", "crisis": false, "source": "gemini|fallback" }`.
+**Changed in F06:** replies now include a `hint` and the system prompt is the
+full verbatim Dawn prompt from `dawn-and-insight-prompts.md`.
 
+Returns `{ "reply": "...", "hint": { "kind": "support", "label": "Ways to reach support", "href": "/support" }, "crisis": false, "source": "gemini|fallback" }`.
+
+- `hint` is `null` for Gemini replies and most fallbacks; when present it
+  points only at `/exercises` or `/support` (low-pressure onward actions).
 - Requires a signed-in session; both sides of the conversation are stored in
   `chat_messages` under your user id.
 - The last six stored messages are sent to the model as bounded history.
+- Fallback replies are deterministic, contextual variants — never generic
+  filler — and are labelled "no AI used" in the UI.
 - On a crisis signal the reply is the fixed support message, `crisis: true`,
   `phone: "14416"` — this happens before any model call, so it works even
   when Gemini is down or `DEMO_MODE=true`.
 - User-supplied text is passed as data, never as instructions that override
   the system prompt.
+
+## GET /api/chat
+
+**Added in F06.** Returns `{ "messages": [ { "id": "...", "role": "user|assistant", "content": "...", "createdAt": "..." } ] }` — the signed-in user's most recent 20 conversation rows, oldest first, so `/dawn` can restore the conversation after a refresh. Own rows only (RLS + application check).
 
 ## GET /api/health
 
