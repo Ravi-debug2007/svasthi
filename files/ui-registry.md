@@ -28,6 +28,8 @@ ticket.
 | `VoiceSignals` | Descriptive measured-acoustic cards (duration, loudness, quiet-ratio, words/min) with Measured badge, session-specific wording, and honest missing-measurement state | Built (F04) |
 | `MessageBubble` | One chat turn: user vs Dawn styling, AI badge always present on Dawn messages, source named (AI wording vs guided no-AI response), optional hint slot | Built (F06) |
 | `ChatPanel` | Dawn conversation: message list, accessible composer with live limit, suggested opening prompts (draft-only, user-initiated), honest clear-conversation scope, duplicate-send guard, crisis callback | Built (F06) |
+| `TrendChart` | One metric over the last seven local days: SVG line/dots with only real days plotted, sample days hollow + badged, scale note, accessible table alternative, meaningful empty state | Built (F07) |
+| `WellnessSummary` | Illustrative self-report index with the formula visible in the UI (not a tooltip), "Not enough information" when null, support-toned bar, plus real-date streak card | Built (F07) |
 
 ## Rules for adding a new component
 

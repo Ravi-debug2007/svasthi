@@ -83,16 +83,33 @@ Returns the signed-in user's **real** data only:
 }
 ```
 
-- `weekly` contains only days that actually have a check-in (no seeded filler).
-- `streakDays` is derived from the user's real distinct check-in dates.
-- `wellnessScore` is an illustrative self-report index (`100 − avg(stress)×7`,
-  clamped to 0), never a medical measure; `null` when there is no data.
-- `latestInsight` is always `null` from this endpoint in F01; the client shows
-  the insight it received from `POST /api/insights`.
+**Changed in F07** (computation moved to `src/lib/dashboard/metrics.ts`, one
+consistent local-date policy with an injectable clock):
 
-Any sample/demo history shown in the UI comes from client-side fixtures,
-visibly badged, and is never served from this endpoint or stored in the
-database.
+- `weekly` contains only days **inside the last seven local days** (today +
+  6 prior) that actually have a check-in — no seeded filler, no fallback to
+  out-of-window entries. Oldest first. Missing days are honest gaps; the UI
+  never interpolates them.
+- `streakDays` is derived from the user's real distinct check-in dates,
+  counting consecutive days ending today or yesterday. Sample/fixture data
+  never counts (it is never sent from this endpoint at all).
+- `avgSleepHours` averages only the days present in the window and is `null`
+  (not `0`) when the window is empty.
+- `wellnessScore` is the illustrative self-report index from
+  `dashboard-and-scoring.md`, computed from the **newest check-in**:
+  `100 × (0.5 × (mood−1)/4 + 0.3 × (1 − stress/10) + 0.2 × energy/10)`,
+  rounded and clamped to 0–100. Sleep and voice acoustics are not inputs.
+  It is never a medical measure and never drives crisis routing; `null` when
+  there is no check-in or values are out of range (the UI then says "Not
+  enough information").
+- `latestInsight` is always `null` from this endpoint; the client shows the
+  insight it received from `POST /api/insights`.
+
+Any sample/demo history shown in the UI comes from client-side fixtures
+(`src/lib/demo/fixtures.ts`), is toggle-gated and visibly badged, and is
+never served from this endpoint or stored in the database. Where a sample
+date collides with a real entry, the UI drops the sample day — real entries
+are always authoritative.
 
 ## POST /api/chat
 
