@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getSessionTimezoneSafeDate, requireUser, isAuthContext, errorResponse } from "@/lib/http";
+import { requireUser, isAuthContext, errorResponse } from "@/lib/http";
+import { buildSeries, computeStreak, latestScore } from "@/lib/dashboard/metrics";
 import type { CheckIn } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +11,11 @@ export const dynamic = "force-dynamic";
  * Returns the signed-in user's real data only. The client overlays sample
  * fixtures (never sent from here) and must badge them as sample. No data is
  * returned without a signed-in session.
+ *
+ * F07: date bucketing, streak, and the illustrative self-report index are
+ * computed by src/lib/dashboard/metrics.ts — one consistent local-date
+ * policy, an injected clock inside that module, and the exact formula from
+ * dashboard-and-scoring.md.
  */
 export async function GET() {
   const auth = await requireUser();
@@ -26,7 +32,7 @@ export async function GET() {
 
   if (error) return errorResponse("Could not load your dashboard.", 500, error.message);
 
-  const checkIns = (data ?? []).map((row: {
+  const checkIns: CheckIn[] = (data ?? []).map((row: {
     id: string;
     created_at: string;
     mood: number;
@@ -44,79 +50,29 @@ export async function GET() {
     contexts: Array.isArray(row.contexts) ? row.contexts : [],
   }));
 
-  // One consistent local-date policy: dates are bucketed by the API server's
-  // local day. Injected via getSessionTimezoneSafeDate so it can be replaced
-  // with a user-timezone policy later without touching callers.
-  const localDate = (iso: string) => getSessionTimezoneSafeDate(iso);
-  const today = getSessionTimezoneSafeDate(new Date().toISOString());
-
-  const byDate = new Map<string, { mood: number; stress: number; sleepHours: number }>();
-  for (const entry of checkIns) {
-    // First entry per date wins (latest check-in of that local day).
-    if (!byDate.has(localDate(entry.createdAt))) {
-      byDate.set(localDate(entry.createdAt), {
-        mood: entry.mood,
-        stress: entry.stress,
-        sleepHours: entry.sleepHours,
-    });
-    }
-  }
-
-  const days: { date: string; mood: number; stress: number; sleepHours: number }[] = [];
-  for (let i = 6; i >= 0; i -= 1) {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    const key = getSessionTimezoneSafeDate(date.toISOString());
-    const entry = byDate.get(key);
-    if (entry) days.push({ date: key, ...entry });
-  }
-
-  // Streak: consecutive distinct local dates ending today or yesterday,
-  // derived from real rows — never hard-coded.
-  const distinctDates = Array.from(byDate.keys()).sort();
-  let streakDays = 0;
-  if (distinctDates.length > 0) {
-    const cursor = new Date();
-    const yesterday = new Date(cursor);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const starts =
-      distinctDates.includes(today) || distinctDates.includes(getSessionTimezoneSafeDate(yesterday.toISOString()));
-    if (starts) {
-      const probe = new Date(cursor);
-      while (true) {
-        const key = getSessionTimezoneSafeDate(probe.toISOString());
-        if (!distinctDates.includes(key)) break;
-        streakDays += 1;
-        probe.setDate(probe.getDate() - 1);
-      }
-    }
-  }
-
-  type WeekDay = { date: string; mood: number; stress: number; sleepHours: number };
-  const recent: WeekDay[] =
-    days.length > 0
-      ? days
-      : checkIns.slice(0, 7).map((entry: CheckIn) => ({
-          date: localDate(entry.createdAt),
-          mood: entry.mood,
-          stress: entry.stress,
-          sleepHours: entry.sleepHours,
-        }));
+  const weekly = buildSeries(checkIns, new Date());
+  const streakDays = computeStreak(checkIns, new Date());
 
   const averageSleep =
-    recent.length > 0 ? recent.reduce((sum, item) => sum + item.sleepHours, 0) / recent.length : 0;
-  const averageStress =
-    recent.length > 0 ? recent.reduce((sum, item) => sum + item.stress, 0) / recent.length : 0;
+    weekly.length > 0 ? weekly.reduce((sum, item) => sum + item.sleepHours, 0) / weekly.length : null;
 
   return NextResponse.json({
-    weekly: recent,
+    // Real days in the last-7-day window only, oldest first. Days without a
+    // check-in are absent — the client renders honest gaps, never filler.
+    weekly,
     currentCheckIn: checkIns[0] ?? null,
     latestInsight: null,
     stats: {
+      // Derived from real distinct check-in dates — never hard-coded, never
+      // counted from sample fixtures.
       streakDays,
-      avgSleepHours: Number(averageSleep.toFixed(1)),
-      // Illustrative self-report index only — not a medical measure.
-      wellnessScore: recent.length > 0 ? Math.max(0, Math.round(100 - averageStress * 7)) : null,
+      // Average over the days actually present in this week's window;
+      // null (not a fake 0) when the week has no entries yet.
+      avgSleepHours: averageSleep == null ? null : Number(averageSleep.toFixed(1)),
+      // Illustrative self-report index from the newest check-in, using the
+      // formula in dashboard-and-scoring.md. null when there is no entry —
+      // the UI then says "Not enough information" rather than faking a number.
+      wellnessScore: latestScore(checkIns),
     },
   });
 }

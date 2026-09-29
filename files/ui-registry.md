@@ -11,7 +11,7 @@ ticket.
 | `StatCard` | Metric + label + provenance badge + optional explanation | Built (F00) |
 | `ProgressBar` | Step progress or an explained index (e.g. wellness score) | Built (F00) |
 | `MoodCard` | Native radio-group semantics with expressive visual state (fieldset + real radios; faces are decoration) | Built (F02) |
-| `ResourceCard` | Service info + verified destination link | Not built (F10) |
+| `ResourceCard` | Service info + verified destination link | Built (F10) |
 | `SourceBadge` | Labels content as "Measured," "Self-reported," "Sample," or "AI wording" | Built (F01) |
 | `EmptyState` | Explanation + one clear useful action | Built (F00) |
 | `ErrorState` | Plain-language failure message + retry | Built (F00) |
@@ -26,6 +26,11 @@ ticket.
 | `VoiceRecorder` | Presentational recorder over the page-owned `useRecorder` controller: real timer + level meter, 60s cap, playback, mic-error copy pointing to typed path | Built (F03) |
 | `TranscriptEditor` | Always-available typed reflection editor with live character count and error slot | Built (F03) |
 | `VoiceSignals` | Descriptive measured-acoustic cards (duration, loudness, quiet-ratio, words/min) with Measured badge, session-specific wording, and honest missing-measurement state | Built (F04) |
+| `MessageBubble` | One chat turn: user vs Dawn styling, AI badge always present on Dawn messages, source named (AI wording vs guided no-AI response), optional hint slot | Built (F06) |
+| `ChatPanel` | Dawn conversation: message list, accessible composer with live limit, suggested opening prompts (draft-only, user-initiated), honest clear-conversation scope, duplicate-send guard, crisis callback | Built (F06) |
+| `BreathingExercise` | Optional one-minute paced guide: start/pause/resume/stop, no hold phase at all, live phase + countdown, progress bar, text-only reduced-motion mode (auto-on via prefers-reduced-motion, always toggleable), honest no-outcome copy, support access visible mid-exercise | Built (F09) |
+| `TrendChart` | One metric over the last seven local days: SVG line/dots with only real days plotted, sample days hollow + badged, scale note, accessible table alternative, meaningful empty state | Built (F07) |
+| `WellnessSummary` | Illustrative self-report index with the formula visible in the UI (not a tooltip), "Not enough information" when null, support-toned bar, plus real-date streak card | Built (F07) |
 
 ## Rules for adding a new component
 

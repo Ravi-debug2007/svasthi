@@ -28,11 +28,18 @@ export default function SupportPage() {
           real form of support. You do not have to wait until things are unbearable to reach out.
         </p>
         <p className="mt-3 text-sm leading-6 text-ink-muted">
-          The curated resource directory (verified links to real services, with an honest
-          distinction between crisis support and booking therapy) is a separate feature on the
-          build plan and is not built yet. Until then, Tele-MANAS at 14416 is the safest starting
-          point — it is free, government-run, and available around the clock.
+          If you are looking for non-emergency talk therapy, psychosocial helplines (such as iCall or
+          Vandrevala Foundation), youth initiatives, or specialized clinical evaluations, explore
+          our curated directory of verified mental health services:
         </p>
+        <div className="mt-4">
+          <Link
+            href="/resources"
+            className="inline-flex min-h-[44px] items-center rounded-full bg-primary px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          >
+            Browse Verified Resource Directory →
+          </Link>
+        </div>
       </section>
 
       <section className="rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
