@@ -11,7 +11,7 @@ ticket.
 | `StatCard` | Metric + label + provenance badge + optional explanation | Built (F00) |
 | `ProgressBar` | Step progress or an explained index (e.g. wellness score) | Built (F00) |
 | `MoodCard` | Native radio-group semantics with expressive visual state (fieldset + real radios; faces are decoration) | Built (F02) |
-| `ResourceCard` | Service info + verified destination link | Not built (F10) |
+| `ResourceCard` | Service info + verified destination link | Built (F10) |
 | `SourceBadge` | Labels content as "Measured," "Self-reported," "Sample," or "AI wording" | Built (F01) |
 | `EmptyState` | Explanation + one clear useful action | Built (F00) |
 | `ErrorState` | Plain-language failure message + retry | Built (F00) |
