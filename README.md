@@ -11,6 +11,8 @@
   <a href="https://ai.google.dev"><img src="https://img.shields.io/badge/Gemini_AI-2.5_Flash-4285F4?style=flat-square&logo=google" alt="Gemini AI"></a>
   <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2D6?style=flat-square&logo=tailwind-css" alt="Tailwind CSS"></a>
   <a href="https://vitest.dev"><img src="https://img.shields.io/badge/Vitest-3.2-yellow?style=flat-square&logo=vitest" alt="Vitest"></a>
+  <a href="https://playwright.dev"><img src="https://img.shields.io/badge/Playwright-E2E_Tests-45ba4b?style=flat-square&logo=playwright" alt="Playwright"></a>
+  <a href="https://github.com/features/actions"><img src="https://img.shields.io/badge/GitHub_Actions-CI_Passing-2088FF?style=flat-square&logo=github-actions" alt="CI"></a>
   <a href="https://telemanas.mohfw.gov.in"><img src="https://img.shields.io/badge/Crisis_Support-Tele--MANAS_14416-8E3038?style=flat-square" alt="Tele-MANAS"></a>
 </p>
 
@@ -69,7 +71,8 @@ Every screen and capability in Svasthi serves this continuous 5-step reflection 
 | **`/dawn`** | **Dawn AI Companion** | A concise, supportive wellness conversationalist. Strictly bounded to a 6-message historical memory. Features sensitive crisis pre-screening before any LLM invocation and safe offline fallbacks. |
 | **`/dashboard`** | **Honest Trends & Streaks** | 7-day trend charts for mood, reported stress, and sleep duration with honest gaps for missed days. Accessible `<details>` data tables, toggleable sample history overlay, and transparent Self-Report Index. |
 | **`/exercises`** | **1-Minute Guided Breathing** | Resonant-frequency pacing guide (4s inhale / 6s exhale, 6 cycles = 60s) designed with **zero breath-holding**. Ambient-aware reduced-motion detection with automatic and manual text-only mode, plus 5-4-3-2-1 sensory grounding. |
-| **`/support`** | **Crisis Directory** | Curated emergency and mental health directory featuring one-tap dialing to Tele-MANAS (`14416`), KIRAN (`1800-599-0019`), and Emergency Services (`112`), with gentle crisis coping instructions. |
+| **`/resources`** | **Verified Resource Directory** | Curated directory of credible Indian mental health organizations (Tele-MANAS, KIRAN, iCall TISS, Vandrevala, NIMHANS NCWB, Sangath). Clear distinction between 24/7 crisis lines and counseling, category filters, keyword search, and toggleable badged sample demo fixture. |
+| **`/support`** | **Crisis Directory** | Curated emergency and mental health directory featuring one-tap dialing to Tele-MANAS (`14416`), KIRAN (`1800-599-0019`), and Emergency Services (`112`), with gentle crisis coping instructions and onward directory link. |
 
 ---
 
@@ -139,7 +142,9 @@ Every metric, card, and insight presented in Svasthi carries an explicit provena
 ├── AI Engine           : Google Gemini 2.5 Flash (@google/genai) with deterministic offline fallbacks
 ├── Request Validation  : Zod 4.x / 3.x schema enforcement
 ├── Audio Processing    : Native Web Audio API (AnalyserNode, PCM RMS extraction, local processing)
-└── Test Framework      : Vitest 3.2.7
+├── Unit Testing        : Vitest 3.2.7 (104 tests across 12 suites)
+├── End-to-End Testing  : Playwright 1.63 (12 E2E tests covering journey, safety fallbacks, mic denial)
+└── CI / Automation     : GitHub Actions (.github/workflows/ci.yml)
 ```
 
 ---
@@ -148,7 +153,7 @@ Every metric, card, and insight presented in Svasthi carries an explicit provena
 
 ### Prerequisites
 
-* **Node.js**: `v18.17.0` or higher
+* **Node.js**: `v18.17.0` or higher (Node 20 recommended)
 * **npm**: `v9.0.0` or higher
 * **Supabase Account**: A free database project at [supabase.com](https://supabase.com) (or local Supabase CLI)
 
@@ -211,16 +216,16 @@ To verify configuration status and API readiness at any time, visit the health c
 
 ---
 
-## 🧪 Testing & Verification
+## 🧪 Testing, CI & Verification
 
-Svasthi includes an automated Vitest test harness covering domain logic, audio feature mathematics, breathing cycle mechanics, crisis detection, and dashboard metrics:
+Svasthi includes an automated multi-layer test suite covering pure math, safety invariants, AI fallbacks, and end-to-end browser workflows:
 
 ```bash
-# Run all unit tests
+# Run unit tests (104 tests in Vitest)
 npm test
 
-# Run tests in watch mode
-npx vitest
+# Run End-to-End tests in Playwright (12 tests)
+npm run test:e2e
 
 # Run TypeScript type check
 npx tsc --noEmit
@@ -228,9 +233,20 @@ npx tsc --noEmit
 # Run ESLint
 npm run lint
 
-# Build for production
+# Build production bundle
 npm run build
 ```
+
+### Continuous Integration (CI)
+Every commit and pull request runs through GitHub Actions (`.github/workflows/ci.yml`):
+- Dependency installation (`npm ci`)
+- ESLint and TypeScript compilation validation
+- 104 Vitest unit tests
+- Next.js production build (`next build`)
+- 12 Playwright end-to-end browser tests in headless Chromium
+
+### Operational Runbook
+For complete production deployment, health monitoring, failover procedures, and incident response guides, refer to [docs/runbook.md](docs/runbook.md).
 
 ---
 
@@ -258,8 +274,11 @@ All requests require a valid Supabase session cookie (handled automatically by t
 
 ```text
 svasthi/
-├── docs/                      # Architectural contracts
-│   └── api-contract.md        # Definitive REST API specification
+├── .github/
+│   └── workflows/ci.yml       # GitHub Actions CI matrix
+├── docs/                      # Architectural contracts & operations
+│   ├── api-contract.md        # Definitive REST API specification
+│   └── runbook.md             # Operations, deployment & incident runbook
 ├── files/                     # Specifications, UI tokens & guidelines
 │   ├── architecture.md        # Technical architecture & threat model
 │   ├── build-plan.md          # 14-step implementation roadmap
@@ -269,6 +288,7 @@ svasthi/
 │   ├── ui-rules.md            # Accessibility baseline & navigation rules
 │   ├── dawn-and-insight-prompts.md # System prompts & fallback copy
 │   └── dashboard-and-scoring.md    # Trends spec & scoring formula
+├── playwright.config.ts       # Playwright E2E configuration
 ├── src/
 │   ├── app/                   # Next.js 14 App Router
 │   │   ├── api/               # Server-side API route handlers
@@ -278,6 +298,7 @@ svasthi/
 │   │   ├── dawn/              # Dawn companion chat interface
 │   │   ├── dashboard/         # 7-day trend charts & metrics
 │   │   ├── exercises/         # 1-minute guided breathing tool
+│   │   ├── resources/         # Verified mental health directory
 │   │   ├── support/           # Tele-MANAS crisis support directory
 │   │   ├── globals.css        # Svasthi color tokens & base styling
 │   │   ├── layout.tsx         # Root layout with SupportBanner & AppShell
@@ -290,6 +311,7 @@ svasthi/
 │   │   ├── dawn/              # ChatPanel, MessageBubble, suggestions
 │   │   ├── exercises/         # BreathingExercise visualizer & text mode
 │   │   ├── layout/            # AppShell, MobileNav, headers
+│   │   ├── resources/         # ResourceCard with operational metadata
 │   │   ├── safety/            # CrisisPanel, SupportBanner
 │   │   └── ui/                # GlassCard, StatCard, SourceBadge, ProgressBar
 │   └── lib/                   # Core business logic & utilities
@@ -298,12 +320,14 @@ svasthi/
 │       ├── check-in/          # Domain validators & score calculations
 │       ├── dashboard/         # Clock-injected metrics & streak algorithms
 │       ├── exercise/          # Pure breathing cycle math (no hold step)
+│       ├── resources.ts       # Curated Indian mental health organizations
 │       ├── safety/            # 19-pattern crisis language detector
 │       ├── supabase/          # SSR and browser client configurations
 │       └── schemas.ts         # Central Zod validation schemas
 ├── supabase/
 │   └── migrations/            # SQL migration scripts & RLS policies
 └── tests/
+    ├── e2e/                   # Playwright end-to-end browser tests
     └── unit/                  # Vitest unit test suites
 ```
 
@@ -317,6 +341,8 @@ Svasthi is built as a humane, dependable product with high architectural care. T
 - [x] **RLS Data Isolation**: Programmatically verified that Row Level Security strictly prevents cross-user access.
 - [x] **Accessible Reduced Motion**: Calming exercises support 100% text-only operation for reduced-motion preferences.
 - [x] **Safe Resonant Breathing**: Pacing is locked to 4s in / 6s out (0.1 Hz) with zero breath-holding to prevent hyperventilation distress.
+- [x] **Verified Resource Directory**: Real, checked Indian support organizations with verifiedAsOf dates and clear crisis vs counseling split.
+- [x] **Comprehensive Testing & CI**: 104 unit tests, 12 Playwright E2E tests, and automated GitHub Actions workflow.
 - [ ] **Human Security Audit**: Independent review of Supabase RLS and session cookie security before general public use.
 - [ ] **Clinical Safety Review**: Multi-lingual clinical evaluation of crisis language patterns and onward support copy by qualified mental health professionals.
 
